@@ -8,8 +8,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int count = 0;
-  String zikr = "Subhan' Allah";
+  String _zikr = "Subhan' Allah";
+  int _count = 0;
+  bool _lightMode = true;
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +18,11 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("./assets/i2.jpg"),
+            image: AssetImage(_lightMode
+                ? "./assets/image_light.jpeg"
+                : "./assets/image_dark.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -27,18 +30,18 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             SizedBox(height: MediaQuery.of(context).size.height * 0.1),
             Text(
-              zikr,
-              style: const TextStyle(
-                color: Colors.white,
+              _zikr,
+              style: TextStyle(
+                color: color(),
                 fontSize: 35,
                 fontWeight: FontWeight.bold,
                 // color: Colors.black,
               ),
             ),
             Text(
-              "$count",
-              style: const TextStyle(
-                color: Colors.white,
+              "$_count",
+              style: TextStyle(
+                color: color(),
                 fontSize: 50,
                 fontWeight: FontWeight.bold,
                 // color: Colors.black,
@@ -46,23 +49,25 @@ class _HomePageState extends State<HomePage> {
             ),
             const Spacer(),
             ElevatedButton(
-              child: const Icon(
+              child: Icon(
                 Icons.fingerprint,
-                color: Colors.white,
+                color: color(),
                 size: 100,
               ),
               style: ElevatedButton.styleFrom(
                 primary: Colors.transparent,
                 elevation: 0,
+                onPrimary: Colors.grey,
+                shadowColor: Colors.transparent,
                 padding: const EdgeInsets.all(0),
                 shape: const CircleBorder(),
                 fixedSize: const Size(120, 120),
               ),
               onPressed: () {
-                if (count >= 99) {
-                  count = 0;
+                if (_count >= 99) {
+                  _count = 0;
                 } else {
-                  count += 1;
+                  _count += 1;
                 }
                 zikrOzgarishi();
               },
@@ -71,27 +76,61 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        child: const Icon(Icons.replay_outlined),
-        onPressed: () {
-          count = 0;
-          zikrOzgarishi();
-        },
+      floatingActionButton: Row(
+        children: <Widget>[
+          const Spacer(flex: 1),
+          FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            splashColor: Colors.grey,
+            highlightElevation: 0,
+            child: Icon(
+              Icons.replay_outlined,
+              color: color(),
+            ),
+            onPressed: () {
+              _count = 0;
+              zikrOzgarishi();
+            },
+          ),
+          const Spacer(flex: 8),
+          FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            splashColor: Colors.grey,
+            highlightElevation: 0,
+            child: Icon(
+              _lightMode ? Icons.light_mode : Icons.dark_mode,
+              color: color(),
+            ),
+            onPressed: () {
+              _lightMode = !_lightMode;
+              setState(() {});
+            },
+          ),
+          const Spacer(flex: 1),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
   void zikrOzgarishi() {
-    if (count >= 0 && count < 33) {
-      zikr = "Subhan' Allah";
-    } else if (count >= 33 && count < 66) {
-      zikr = "Alhamdulillah";
-    } else if (count >= 66 && count < 99) {
-      zikr = "Allah hu akbar";
+    if (_count >= 0 && _count < 33) {
+      _zikr = "Subhan' Allah";
+    } else if (_count >= 33 && _count < 66) {
+      _zikr = "Alhamdulillah";
+    } else if (_count >= 66 && _count < 99) {
+      _zikr = "Allah hu akbar";
     }
     setState(() {});
+  }
+
+  Color color() {
+    if (_lightMode) {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
   }
 }
